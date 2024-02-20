@@ -25,6 +25,7 @@ RUN apk add --no-cache \
 
 RUN set -eux; \
     install-php-extensions \
+        gd \
         gmp \
         intl \
     	zip \
