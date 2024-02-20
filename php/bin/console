@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use App\Command\ChallengeResolverCommand;
+use App\Command\ChallengeMakerCommand;
+use App\Command\PrivateLeaderboardCommand;
+
+
+$application = new Application();
+
+// ... register commands
+$application->add(new ChallengeResolverCommand());
+$application->add(new ChallengeMakerCommand());
+
+// set as default command
+//$application->setDefaultCommand($command->getName());
+
+$application->run();
