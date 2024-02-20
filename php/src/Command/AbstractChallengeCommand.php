@@ -69,7 +69,7 @@ abstract class AbstractChallengeCommand extends Command
         return preg_replace('/\s+/', '', $bar);
     }
 
-    protected function getLink($name)
+    protected function getLink($name, $year = null): string
     {
         $dotenv = new Dotenv();
         $dotenv->loadEnv(__DIR__.'/../../.env');
@@ -77,16 +77,24 @@ abstract class AbstractChallengeCommand extends Command
         $link = $_ENV['BASE_LINK'];
         $linkSuffix = $_ENV['DETAIL_LINK_SUFFIX'];
 
+        if ($year && str_contains($link, 'pydefis.callicode.fr')) {
+            $name = sprintf('C%s_%s', $year, $name);
+        }
+
         return sprintf('%s%s%s', $link, $name, $linkSuffix);
     }
 
-    protected function getDataLink($name)
+    protected function getDataLink($year, $name): string
     {
         $dotenv = new Dotenv();
         $dotenv->loadEnv(__DIR__.'/../../.env');
 
         $link = $_ENV['BASE_LINK'];
         $linkSuffix = $_ENV['INPUT_LINK_SUFFIX'];
+
+        if (str_contains($link, 'pydefis.callicode.fr')) {
+            $name = sprintf('C%s_%s', $year, $name);
+        }
 
         return sprintf('%s%s%s', $link, $name, $linkSuffix);
     }

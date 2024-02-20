@@ -31,7 +31,7 @@ class ChallengeResolverCommand extends AbstractChallengeCommand
         $year = $input->getOption('year');
         $name = $this->toCamelCase($input->getArgument('name'));
 
-        $link = $this->getLink($name);
+        $link = $this->getLink($name, $year);
 
         $isTest = $input->getOption('test');
         $options = ['mode' => $isTest ? AbstractChallengeResolver::TEST_MODE : AbstractChallengeResolver::PROD_MODE];

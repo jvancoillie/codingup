@@ -30,7 +30,7 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
 
         $name = $this->toCamelCase($input->getArgument('name'));
 
-        $link = $this->getLink($name);
+        $link = $this->getLink($name, $year);
 
         $folderPath = sprintf('src/Challenge/Cup%d/%s', $year, $name);
         $namespace = sprintf("App\Challenge\Cup%d\%s", $year, $name);
@@ -41,7 +41,7 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
 
         if ($this->filesystem->exists($resolverFilePath)) {
             $output->writeln(
-                sprintf('<comment> Enable to create Challenge "%s" Resolver Class, already exist ! </comment>', $name)
+                sprintf('<comment> Unable to create Challenge "%s" Resolver Class, already exist ! </comment>', $name)
             );
 
             return Command::FAILURE;
@@ -78,7 +78,7 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
             ];
         }
         try {
-            $inputDataLink = $this->getDataLink($name);
+            $inputDataLink = $this->getDataLink($year, $name);
             $output->writeln(sprintf('<info>--- %s --- <info>', $inputDataLink));
             $response = $this->client->request(
                 'GET',
