@@ -52,6 +52,11 @@ class Image
         return imagesy($this->resource);
     }
 
+    public function getSize(): array
+    {
+        return [$this->getWidth(), $this->getHeight()];
+    }
+
     public function getRGBA($x, $y): array
     {
         $rgb = $this->getColorat($x, $y);

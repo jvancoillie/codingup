@@ -26,8 +26,6 @@ class Generator
     }
 
     /**
-     * @psalm-param 1|2 $size
-     *
      * @psalm-return \Generator<int, array<mixed|null>, mixed, void>
      */
     public static function combinationsFixedSize(array $dataset, int $size = 1): \Generator

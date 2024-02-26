@@ -62,11 +62,20 @@ class Grid
         return $count;
     }
 
-    public static function rotate(array $grid)
+    public static function rotate(array $grid, $clockwise = true, int $degres = 90): array
     {
-        array_unshift($grid, null);
-        $grid = call_user_func_array('array_map', $grid);
+        if (0 !== $degres % 90) {
+            throw new \Exception('degrees must be a modulo of 90');
+        }
 
-        return array_map('array_reverse', $grid);
+        $rotations = ($degres / 90) % 4;
+
+        for ($r = 0; $r < $rotations; ++$r) {
+            array_unshift($grid, null);
+            $grid = call_user_func_array('array_map', $grid);
+            $grid = $clockwise ? array_map('array_reverse', $grid) : array_reverse($grid);
+        }
+
+        return $grid;
     }
 }
