@@ -16,8 +16,14 @@ help: ## Outputs this help screen
 build-php:			## Build The Image
 	docker build -t codingup:php --target php_codingup ./php
 
+build-python:			## Build The Image
+	docker build -t codingup:python --target python_codingup ./python
+
 run-php-bash:			## Enter container bash
 	docker run --rm -it -v $(PWD)/php:/srv/app codingup:php /bin/bash
+
+run-python-sh:			## Enter container bash
+	docker run --rm -it -v $(PWD)/python:/srv/app codingup:python /bin/sh
 
 images: ## List codingup docker images
 	docker images codingup
