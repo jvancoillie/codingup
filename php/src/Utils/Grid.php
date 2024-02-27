@@ -78,4 +78,13 @@ class Grid
 
         return $grid;
     }
+
+    public static function flip(array $grid, $vertical = true): array
+    {
+        if($vertical){
+            return array_map('array_reverse', $grid);
+        }
+
+        return array_reverse($grid);
+    }
 }
