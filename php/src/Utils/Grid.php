@@ -81,7 +81,7 @@ class Grid
 
     public static function flip(array $grid, $vertical = true): array
     {
-        if($vertical){
+        if ($vertical) {
             return array_map('array_reverse', $grid);
         }
 
