@@ -17,7 +17,7 @@ format: vendor/autoload.php  ## Format code with php-cs-fixer
 	$(PHP) vendor/bin/php-cs-fixer fix
 
 phpstan: phpstan.neon.dist ## Run PHPStan (the configuration must be defined in phpstan.neon)
-	$(PHP) vendor/bin/phpstan analyse  --xdebug
+	$(PHP) vendor/bin/phpstan analyse  --xdebug --memory-limit 1G
 
 psalm: psalm.xml ## Run Psalm
 	$(PHP) vendor/bin/psalm  --no-cache
