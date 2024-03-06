@@ -3,9 +3,7 @@
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -13,27 +11,26 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
 {
     protected static $defaultName = 'challenge:make';
 
-    protected function configure()
+    protected function configure(): void
     {
-        $currentYear = (new \DateTime())->format('y');
-
+        parent::configure();
         $this
             ->setDescription('Create the input data and structure for a given Challenge name')
-            ->addArgument('name', InputArgument::OPTIONAL, 'the Challenge name')
-            ->addOption('year', 'y', InputOption::VALUE_REQUIRED, 'the year of the event', $currentYear)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $year = $input->getOption('year');
+        $directory = $this->getChallengeDirectory($input);
 
-        $name = $this->toCamelCase($input->getArgument('name'));
+        $name = $input->getArgument('name');
 
-        $link = $this->getLink($name, $year);
+        $link = $this->getLink($name);
 
-        $folderPath = sprintf('src/Challenge/Cup%d/%s', $year, $name);
-        $namespace = sprintf("App\Challenge\Cup%d\%s", $year, $name);
+        $camelCaseName = $this->toCamelCase($name);
+
+        $folderPath = sprintf('src/Challenge/%s/%s', $directory, $camelCaseName);
+        $namespace = sprintf("App\Challenge\%s\%s", $directory, $camelCaseName);
 
         $inputFilePath = sprintf('%s/input/input.txt', $folderPath);
         $testFilePath = sprintf('%s/input/test.txt', $folderPath);
@@ -66,7 +63,7 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
 
         $output->writeln(sprintf('<info>--- Retrieve data for Challenge:  %1$s --- <info>', $name));
 
-        $sessionId = $this->getSessionid();
+        $sessionId = $this->getSessionId();
         $options = [];
 
         if ($sessionId) {
@@ -78,7 +75,7 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
             ];
         }
         try {
-            $inputDataLink = $this->getDataLink($year, $name);
+            $inputDataLink = $this->getDataLink($name);
             $output->writeln(sprintf('<info>--- %s --- <info>', $inputDataLink));
             $response = $this->client->request(
                 'GET',
@@ -104,7 +101,7 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
         return Command::SUCCESS;
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         if (null !== $input->getArgument('name')) {
             return;
@@ -126,12 +123,5 @@ class ChallengeMakerCommand extends AbstractChallengeCommand
         include $templatePath;
 
         return ob_get_clean();
-    }
-
-    public function getChallengeDirectory(InputInterface $input): string
-    {
-        $year = $input->getOption('year');
-
-        return sprintf('Cup%d', $year);
     }
 }

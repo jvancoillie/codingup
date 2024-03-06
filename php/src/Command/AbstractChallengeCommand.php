@@ -3,7 +3,9 @@
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Dotenv\Dotenv;
@@ -27,12 +29,20 @@ abstract class AbstractChallengeCommand extends Command
         $this->filesystem = new Filesystem();
     }
 
+    protected function configure(): void
+    {
+        $this
+            ->addArgument('name', InputArgument::OPTIONAL, 'the Challenge name')
+            ->addOption('directory', 'd', InputOption::VALUE_OPTIONAL, 'the year of the event')
+        ;
+    }
+
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         if (null !== $input->getArgument('name')) {
             return;
@@ -50,7 +60,7 @@ abstract class AbstractChallengeCommand extends Command
         foreach ($finder as $directory) {
             $names[] = $directory->getRelativePathname();
         }
-
+        sort($names);
         $name = $this->io->choice(
             'Which Sample would you run ?',
             $names
@@ -61,15 +71,16 @@ abstract class AbstractChallengeCommand extends Command
         $input->setArgument('name', $name);
     }
 
-    protected function toCamelCase($string)
+    protected function toCamelCase($string): string
     {
-        $s = ucfirst($string);
-        $bar = ucwords($s);
+        $string = ucfirst($string);
+        $string = str_replace('_', ' ', $string);
+        $string = ucwords($string);
 
-        return preg_replace('/\s+/', '', $bar);
+        return (string) preg_replace('/\s+/', '', $string);
     }
 
-    protected function getLink($name, $year = null): string
+    protected function getLink($name): string
     {
         $dotenv = new Dotenv();
         $dotenv->loadEnv(__DIR__.'/../../.env');
@@ -77,14 +88,10 @@ abstract class AbstractChallengeCommand extends Command
         $link = $_ENV['BASE_LINK'];
         $linkSuffix = $_ENV['DETAIL_LINK_SUFFIX'];
 
-        if ($year && str_contains($link, 'pydefis.callicode.fr')) {
-            $name = sprintf('C%s_%s', $year, $name);
-        }
-
         return sprintf('%s%s%s', $link, $name, $linkSuffix);
     }
 
-    protected function getDataLink($year, $name): string
+    protected function getDataLink($name): string
     {
         $dotenv = new Dotenv();
         $dotenv->loadEnv(__DIR__.'/../../.env');
@@ -92,14 +99,10 @@ abstract class AbstractChallengeCommand extends Command
         $link = $_ENV['BASE_LINK'];
         $linkSuffix = $_ENV['INPUT_LINK_SUFFIX'];
 
-        if (str_contains($link, 'pydefis.callicode.fr')) {
-            $name = sprintf('C%s_%s', $year, $name);
-        }
-
         return sprintf('%s%s%s', $link, $name, $linkSuffix);
     }
 
-    protected function getSessionid()
+    protected function getSessionId(): string
     {
         $dotenv = new Dotenv();
         // loads .env, .env.local, and .env.$APP_ENV.local or .env.$APP_ENV
@@ -108,5 +111,21 @@ abstract class AbstractChallengeCommand extends Command
         return $_ENV['PYDEFIS_SESSSION_ID'];
     }
 
-    abstract public function getChallengeDirectory(InputInterface $input): string;
+    public function getChallengeDirectory(InputInterface $input): string
+    {
+        $directory = $input->getOption('directory');
+
+        if ($directory) {
+            return $directory;
+        }
+
+        $dotenv = new Dotenv();
+        $dotenv->loadEnv(__DIR__.'/../../.env');
+
+        $link = $_ENV['BASE_LINK'];
+        $parsedUrl = parse_url($link);
+        $directory = basename($parsedUrl['path']);
+
+        return ucfirst(!empty($directory) ? $directory : 'default');
+    }
 }
