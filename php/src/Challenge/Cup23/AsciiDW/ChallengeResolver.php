@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Challenge\Cup23\C23_AsciiDW;
+namespace App\Challenge\Cup23\AsciiDW;
 
 use App\Challenge\AbstractChallengeResolver;
 

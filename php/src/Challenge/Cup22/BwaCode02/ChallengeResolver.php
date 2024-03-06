@@ -28,7 +28,7 @@ class ChallengeResolver extends AbstractChallengeResolver
 
         $ans = [];
         foreach (str_split('STOP') as $l) {
-            $pos = array_search($l, $alpha);
+            $pos = (string) array_search($l, $alpha);
             $b = base_convert($pos, 10, 3);
             foreach (str_split($b) as $i) {
                 $ans[] = self::ENCODE[(int) $i];
