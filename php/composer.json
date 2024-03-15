@@ -19,7 +19,8 @@
     "endroid/qr-code": "^5.0",
     "khanamiryan/qrcode-detector-decoder": "^2.0",
     "james-heinrich/getid3": "^1.9",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "ext-intl": "*"
   },
   "autoload": {
     "psr-4": {
