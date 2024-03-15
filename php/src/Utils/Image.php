@@ -52,6 +52,9 @@ class Image
         return imagesy($this->resource);
     }
 
+    /**
+     * @return array width, height
+     */
     public function getSize(): array
     {
         return [$this->getWidth(), $this->getHeight()];
@@ -62,6 +65,37 @@ class Image
         $rgb = $this->getColorat($x, $y);
 
         return imagecolorsforindex($this->resource, $rgb);
+    }
+
+    public function getRGB($x, $y): array
+    {
+        $colorIndex = $this->getColorat($x, $y);
+
+        // extract RGB
+        $red = ($colorIndex >> 16) & 0xFF;
+        $green = ($colorIndex >> 8) & 0xFF;
+        $blue = $colorIndex & 0xFF;
+
+        return ['red' => $red, 'green' => $green, 'blue' => $blue];
+    }
+
+    public function getYIQ($x, $y)
+    {
+        $rgb = $this->getRGB($x, $y);
+
+        // Convert RGB to YIQ
+        $y = ($rgb['red'] * 0.299) + ($rgb['green'] * 0.587) + ($rgb['blue'] * 0.114);
+        $i = ($rgb['red'] * 0.596) - ($rgb['green'] * 0.275) - ($rgb['blue'] * 0.321);
+        $q = ($rgb['red'] * 0.212) - ($rgb['green'] * 0.523) + ($rgb['blue'] * 0.311);
+
+        return ['y' => $y, 'i' => $i, 'q' => $q];
+    }
+
+    public function getGrayLevel($x, $y): int
+    {
+        $rgb = $this->getRGB($x, $y);
+
+        return (int) array_sum($rgb);
     }
 
     public function getAlpha($x, $y): mixed

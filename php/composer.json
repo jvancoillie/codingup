@@ -18,7 +18,8 @@
     "symfony/css-selector": "^7.0",
     "endroid/qr-code": "^5.0",
     "khanamiryan/qrcode-detector-decoder": "^2.0",
-    "james-heinrich/getid3": "^1.9"
+    "james-heinrich/getid3": "^1.9",
+    "ext-gd": "*"
   },
   "autoload": {
     "psr-4": {
