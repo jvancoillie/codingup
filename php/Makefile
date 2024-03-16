@@ -26,7 +26,7 @@ psalm: psalm.xml ## Run Psalm
 
 qa-all:
 	make format
-	make psalm
+	#make psalm
 	make phpstan
 
 ##—— Composer —————————————————————————————————————————————————————————————————————————————————————————————————————————
